@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>AR Nutrition DZ</title>
+  <link rel="stylesheet" href="main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- CART OVERLAY -->
+
+  <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h2 class="t" data-ar="🛒 سلة المشتريات" data-en="🛒 Shopping Cart" data-fr="🛒 Panier">🛒 سلة المشتريات</h2>
+      <button class="cart-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty t" data-ar="السلة فارغة 🛒" data-en="Cart is empty 🛒" data-fr="Panier vide 🛒">السلة فارغة 🛒</div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span class="cart-total-label t" data-ar="المجموع:" data-en="Total:" data-fr="Total:">المجموع:</span>
+        <span class="cart-total-price" id="cartTotal">0 DA</span>
+      </div>
+      <button class="checkout-btn t" data-ar="🎯 إتمام الطلب" data-en="🎯 Place Order" data-fr="🎯 Commander" onclick="openOrderModal()">🎯
+        إتمام الطلب</button>
+    </div>
+  </div>
+
+  <!-- ══ ORDER MODAL ══ -->
+
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="t" data-ar="تأكيد الطلب" data-en="Confirm Order" data-fr="Confirmer la Commande">تأكيد الطلب</h2>
+      <button class="cart-close" onclick="closeOrderModal()">✕</button>
+    </div>
+    <div class="modal-body modal-form" id="modalBody">
+      <div class="modal-order-summary" id="modalOrderSummary"></div>
+
+```
+  <!-- NAME -->
+  <div class="form-group">
+    <label class="field-label t" data-ar="الاسم الكامل *" data-en="Full Name *" data-fr="Nom Complet *">الاسم الكامل *</label>
+    <input type="text" id="o-name" class="field-input" placeholder="مثال: أحمد بن علي" autocomplete="name">
+    <span class="field-err" id="err-name"></span>
+  </div>
+
+  <!-- PHONE -->
+  <div class="form-group">
+    <label class="field-label t" data-ar="رقم الهاتف *" data-en="Phone Number *" data-fr="Numéro de Tél *">رقم الهاتف *</label>
+    <input type="tel" id="o-phone" class="field-input" placeholder="05XX XX XX XX" inputmode="numeric" maxlength="10" autocomplete="tel">
+    <span class="field-err" id="err-phone"></span>
+  </div>
+
+  <!-- WILAYA -->
+  <div class="form-group">
+    <label class="field-label t" data-ar="الولاية *" data-en="Wilaya *" data-fr="Wilaya *">الولاية *</label>
+    <select id="o-wilaya" class="field-input" onchange="onWilayaChange(this.value)">
+      <option value="">— اختر الولاية / Choose Wilaya —</option>
+    </select>
+    <span class="field-err" id="err-wilaya"></span>
+  </div>
+
+  <!-- COMMUNE -->
+  <div class="form-group" style="display:none;">
+    <label class="field-label t" data-ar="البلدية *" data-en="Commune *" data-fr="Commune *">البلدية *</label>
+    <select id="o-commune" class="field-input" disabled>
+      <option value="">— اختر الولاية أولاً —</option>
+    </select>
+    <span class="field-err" id="err-commune"></span>
+  </div>
+
+  <!-- DELIVERY TYPE -->
+  <div class="form-group">
+    <label class="field-label t" data-ar="شركة التوصيل *" data-en="Delivery Company *" data-fr="Transporteur *">شركة التوصيل *</label>
+    <div class="delivery-options">
+      <label class="delivery-option" id="opt-home">
+        <input type="radio" name="delivery-type" value="domicile" onchange="onDeliveryChange('domicile');renderCart()" checked>
+        <div class="delivery-option-inner">
+          <span class="delivery-icon">⚡</span>
+          <div>
+            <div class="delivery-title t" data-ar="Swift Express" data-en="Swift Express">Swift Express</div>
+            <div class="delivery-sub">توصيل للمنزل · Livraison à domicile</div>
+            <div class="delivery-sub" style="color:var(--red);font-weight:700;margin-top:2px">800 DA</div>
+          </div>
+        </div>
+      </label>
+      <label class="delivery-option" id="opt-bureau">
+        <input type="radio" name="delivery-type" value="bureau" onchange="onDeliveryChange('bureau');renderCart()">
+        <div class="delivery-option-inner">
+          <span class="delivery-icon">🚚</span>
+          <div>
+            <div class="delivery-title t" data-ar="Anderson Express" data-en="Anderson Express">Anderson Express</div>
+            <div class="delivery-sub">استلام من المكتب · Livraison au bureau</div>
+            <div class="delivery-sub" style="color:var(--red);font-weight:700;margin-top:2px">500 DA</div>
+          </div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- ADDRESS — shown only for home delivery -->
+  <div class="form-group" id="address-group">
+    <label class="field-label t" data-ar="العنوان الكامل *" data-en="Full Address *" data-fr="Adresse Complète *">العنوان الكامل *</label>
+    <textarea id="o-address" class="field-input" style="min-height:70px;resize:vertical" placeholder="رقم، حي، شارع..."></textarea>
+    <span class="field-err" id="err-address"></span>
+  </div>
+
+  <!-- NOTES (optional) -->
+  <div class="form-group">
+    <label class="field-label t" data-ar="ملاحظات إضافية (اختياري)" data-en="Additional Notes (Optional)" data-fr="Notes Supplémentaires (Optionnel)">ملاحظات إضافية (اختياري)</label>
+    <textarea id="o-notes" class="field-input" style="min-height:60px;resize:vertical" placeholder="أي تفاصيل إضافية..."></textarea>
+  </div>
+
+  <button class="btn-primary" style="width:100%;font-size:16px;" id="submitOrderBtn" onclick="submitOrder()">
+    <span class="t" data-ar="✅ إرسال الطلب" data-en="✅ Send Order" data-fr="✅ Envoyer la Commande">✅ إرسال الطلب</span>
+  </button>
+  <div id="order-msg" style="margin-top:12px;font-size:14px;font-weight:700;text-align:center;"></div>
+</div>
+```
+
+  </div>
+</div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- NAV -->
+
+  <nav id="mainNav">
+    <div class="logo">AR <span>Nutrition</span>.DZ</div>
+    <ul class="nav-links">
+      <li><a href="#products" class="t" data-ar="المنتجات" data-en="Products" data-fr="Produits">المنتجات</a></li>
+      <li><a href="#social" class="t" data-ar="تواصل معنا" data-en="Social" data-fr="Réseaux Sociaux">تواصل معنا</a></li>
+      <li><a href="#contact" class="t" data-ar="اتصل بنا" data-en="Contact" data-fr="Contact">اتصل بنا</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('ar')">AR</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn"><span id="themeBtnIcon">🌙</span></button>
+      <button class="cart-btn" onclick="openCart()">
+        🛒 <span class="t" data-ar="السلة" data-en="Cart">السلة</span>
+        <span class="cart-count" id="cartCount" style="display:none">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+
+  <div class="hero">
+    <!-- LOGO PLACEMENT: click to upload your logo image -->
+    <div class="hero-logo-wrap">
+      <img id="heroLogoImg" class="hero-logo-img" src="pfp.jpg" alt="Logo" onclick="document.getElementById('heroLogoInput').click()" title="Click to change logo">
+      <div class="hero-logo-placeholder" id="heroLogoPlaceholder" style="display: none;" onclick="document.getElementById('heroLogoInput').click()">
+      </div>
+    </div>
+    <div class="hero-badge t" data-ar="🚚 توصيل لـ 58 ولاية" data-en="🚚 Delivery to 58 Wilayas">🚚 توصيل لـ 58 ولاية
+    </div>
+    <h1 class="t" data-ar='أفضل <span class="accent">الفيتامينات</span><br>والمكملات الغذائية'
+      data-en='Best <span class="accent">Vitamins</span><br>& Supplements'>أفضل <span
+        class="accent">الفيتامينات</span><br>والمكملات الغذائية</h1>
+    <p class="t" data-ar="فيتامينات ومكملات غذائية أصلية 100% — للتضخيم، التنشيف والفيتامينات — بالجملة والتجزئة"
+      data-en="100% authentic vitamins & supplements — bulking, cutting, vitamins — wholesale & retail">فيتامينات ومكملات غذائية أصلية 100% — للتضخيم، التنشيف والفيتامينات — بالجملة والتجزئة</p>
+    <div class="hero-cta">
+      <button class="btn-primary t" data-ar="تسوّق الآن" data-en="Shop Now"
+        onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">تسوّق الآن</button>
+      <button class="btn-secondary t" data-ar="اتصل بنا" data-en="Contact Us"
+        onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">اتصل بنا</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num">223</div>
+      <div class="stat-label t" data-ar="متابع Instagram" data-en="Instagram Followers">متابع Instagram</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">58</div>
+      <div class="stat-label t" data-ar="ولاية توصيل" data-en="Wilaya Delivery">ولاية توصيل</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label t" data-ar="منتجات أصلية" data-en="Authentic Products">منتجات أصلية</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">50+</div>
+      <div class="stat-label t" data-ar="منتج متاح" data-en="Products Available">منتج متاح</div>
+    </div>
+  </div>
+
+  <!-- HIGHLIGHTS (Instagram story-style) -->
+
+  <div class="highlights-bar">
+    <div class="highlight-item" onclick="filterCat('بروتين', document.querySelector('[data-cat=بروتين]')); document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+      <div class="highlight-ring"><div class="highlight-icon">💪</div></div>
+      <div class="highlight-label">Mass Gainer</div>
+    </div>
+    <div class="highlight-item" onclick="filterCat('بروتين', document.querySelector('[data-cat=بروتين]')); document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+      <div class="highlight-ring"><div class="highlight-icon">🥛</div></div>
+      <div class="highlight-label">Protéine</div>
+    </div>
+    <div class="highlight-item" onclick="filterCat('فيتامينات', document.querySelector('[data-cat=فيتامينات]')); document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+      <div class="highlight-ring"><div class="highlight-icon">🔥</div></div>
+      <div class="highlight-label">Lipo 6</div>
+    </div>
+    <div class="highlight-item" onclick="filterCat('فيتامينات', document.querySelector('[data-cat=فيتامينات]')); document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+      <div class="highlight-ring"><div class="highlight-icon">⚡</div></div>
+      <div class="highlight-label">L-Carnitine</div>
+    </div>
+    <div class="highlight-item" onclick="filterCat('كرياتين', document.querySelector('[data-cat=كرياتين]')); document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+      <div class="highlight-ring"><div class="highlight-icon">🧬</div></div>
+      <div class="highlight-label">Créatine</div>
+    </div>
+    <div class="highlight-item" onclick="filterCat('Pre-Workout', document.querySelector('[data-cat=Pre-Workout]')); document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+      <div class="highlight-ring"><div class="highlight-icon">🚀</div></div>
+      <div class="highlight-label">Pre-Workout</div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+
+  <section id="products">
+    <span class="section-line"></span>
+    <div class="section-title t" data-ar="منتجاتنا" data-en="Our Products">منتجاتنا</div>
+    <p class="section-sub t" data-ar="فيتامينات ومكملات للتضخيم والتنشيف — بالجملة والتجزئة"
+      data-en="Vitamins & supplements for bulking and cutting — wholesale and retail">فيتامينات ومكملات للتضخيم والتنشيف — بالجملة والتجزئة</p>
+    <div class="cats">
+      <button class="cat-btn active t" data-cat="all" data-ar="الكل" data-en="All"
+        onclick="filterCat('all',this)">الكل</button>
+      <button class="cat-btn t" data-cat="بروتين" data-ar="🥛 بروتين" data-en="🥛 Protein"
+        onclick="filterCat('بروتين',this)">🥛 بروتين</button>
+      <button class="cat-btn t" data-cat="Mass Gainer" data-ar="💪 Mass Gainer" data-en="💪 Mass Gainer"
+        onclick="filterCat('Mass Gainer',this)">💪 Mass Gainer</button>
+      <button class="cat-btn t" data-cat="كرياتين" data-ar="⚡ كرياتين" data-en="⚡ Creatine"
+        onclick="filterCat('كرياتين',this)">⚡ كرياتين</button>
+      <button class="cat-btn t" data-cat="Fat Burner" data-ar="🔥 Fat Burner" data-en="🔥 Fat Burner"
+        onclick="filterCat('Fat Burner',this)">🔥 Fat Burner</button>
+      <button class="cat-btn t" data-cat="Pre-Workout" data-ar="⚡ Pre-Workout" data-en="⚡ Pre-Workout"
+        onclick="filterCat('Pre-Workout',this)">⚡ Pre-Workout</button>
+      <button class="cat-btn t" data-cat="أحماض أمينية" data-ar="🧬 أمينو" data-en="🧬 Amino Acids"
+        onclick="filterCat('أحماض أمينية',this)">🧬 أمينو</button>
+      <button class="cat-btn t" data-cat="فيتامينات" data-ar="💊 فيتامينات" data-en="💊 Vitamins"
+        onclick="filterCat('فيتامينات',this)">💊 فيتامينات</button>
+      <button class="cat-btn t" data-cat="مكملات صحية" data-ar="🌿 مكملات صحية" data-en="🌿 Health Supps"
+        onclick="filterCat('مكملات صحية',this)">🌿 مكملات صحية</button>
+      <button class="cat-btn t" data-cat="كولاجين" data-ar="✨ كولاجين" data-en="✨ Collagen"
+        onclick="filterCat('كولاجين',this)">✨ كولاجين</button>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <!-- SOCIAL -->
+
+  <div class="social-section" id="social">
+    <div class="social-label t" data-ar="تابعونا" data-en="FOLLOW US">تابعونا</div>
+    <div class="social-big-title t" data-ar="تواصل معنا" data-en="Find Us Online">تواصل معنا</div>
+    <p class="social-sub t" data-ar="ابق على اطلاع بأحدث المنتجات والعروض"
+      data-en="Stay updated on new products and offers">ابق على اطلاع بأحدث المنتجات والعروض</p>
+    <div class="social-cards">
+      <a class="social-card fb" href="https://web.facebook.com/people/AR-Nutrition-et-Sport/61589135626747/?ref=PROFILE_EDIT_xav_ig_profile_page_web#" target="_blank">
+        <div class="social-icon-wrap"><svg viewBox="0 0 24 24">
+            <path
+              d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
+          </svg></div>
+        <div class="social-name">Facebook</div>
+        <div class="social-handle">@ar.nutrition1224</div>
+      </a>
+      <a class="social-card ig" href="https://instagram.com/ar.nutrition1224" target="_blank">
+        <div class="social-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#f09433" />
+                <stop offset="25%" style="stop-color:#e6683c" />
+                <stop offset="50%" style="stop-color:#dc2743" />
+                <stop offset="75%" style="stop-color:#cc2366" />
+                <stop offset="100%" style="stop-color:#bc1888" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+          </svg>
+        </div>
+        <div class="social-name">Instagram</div>
+        <div class="social-handle">@ar.nutrition1224</div>
+      </a>
+      <a class="social-card tg" href="#" target="_blank">
+        <div class="social-icon-wrap"><svg viewBox="0 0 24 24">
+            <path
+              d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+          </svg></div>
+        <div class="social-name">Telegram</div>
+        <div class="social-handle">@ar.nutrition1224</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+
+  <div class="contact-section" id="contact">
+    <div class="contact-inner">
+      <div class="contact-info">
+        <span class="section-line"></span>
+        <h2 class="t" data-ar="اتصل بنا" data-en="Contact Us">اتصل بنا</h2>
+        <p class="t" data-ar="هل لديك استفسار؟ راسلنا مباشرة وسنرد عليك في أقرب وقت."
+          data-en="Have a question? Message us directly and we'll get back to you shortly.">هل لديك استفسار؟ راسلنا
+          مباشرة وسنرد عليك في أقرب وقت.</p>
+        <div class="contact-detail"><span class="contact-icon">📸</span> @ar.nutrition1224</div>
+        <div class="contact-detail"><span class="contact-icon">📦</span><span class="t" data-ar="توصيل لـ 58 ولاية"
+            data-en="Delivery to 58 Wilayas">توصيل لـ 58 ولاية</span></div>
+        <div class="contact-detail"><span class="contact-icon">✅</span><span class="t" data-ar="منتجات أصلية 100%"
+            data-en="100% Authentic Products">منتجات أصلية 100%</span></div>
+      </div>
+      <div>
+        <div class="form-group"><label class="t" data-ar="الاسم الكامل" data-en="Full Name">الاسم الكامل</label><input
+            type="text" id="f-name"></div>
+        <div class="form-group"><label class="t" data-ar="البريد الإلكتروني" data-en="Email Address">البريد
+            الإلكتروني</label><input type="email" id="f-email"></div>
+        <div class="form-group"><label class="t" data-ar="رقم الهاتف" data-en="Phone Number">رقم الهاتف</label><input
+            type="tel" id="f-phone"></div>
+        <div class="form-group">
+          <label class="t" data-ar="الموضوع" data-en="Subject">الموضوع</label>
+          <select id="f-subject">
+            <option value="order" data-ar="طلب منتج" data-en="Product Order">طلب منتج</option>
+            <option value="inquiry" data-ar="استفسار عن منتج" data-en="Product Inquiry">استفسار عن منتج</option>
+            <option value="delivery" data-ar="الشحن والتوصيل" data-en="Shipping & Delivery">الشحن والتوصيل</option>
+            <option value="other" data-ar="أخرى" data-en="Other">أخرى</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="t" data-ar="الرسالة" data-en="Message">الرسالة</label><textarea
+            id="f-msg"></textarea></div>
+        <button class="btn-primary" style="width:100%" onclick="submitContactForm()"><span class="t"
+            data-ar="إرسال الرسالة" data-en="Send Message">إرسال الرسالة</span></button>
+        <div id="form-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="about">
+    <div class="footer-logo">AR Nutrition.DZ</div>
+    <p class="t" data-ar="فيتامينات ومكملات غذائية أصلية — بالجملة والتجزئة — توصيل لـ 58 ولاية"
+      data-en="Authentic vitamins & supplements — wholesale & retail — delivery to 58 wilayas">فيتامينات ومكملات غذائية أصلية — بالجملة والتجزئة — توصيل لـ 58 ولاية</p>
+    <p style="margin-top:8px;font-size:12px;">© 2026 AR Nutrition DZ · @ar.nutrition1224</p>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
+  <script src="main.js"></script>
+
+  <!-- PRELOADER -->
+
+  <div id="preloader" style="position:fixed;inset:0;background:#0a0a0a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s">
+    <div id="preloaderParticles" style="position:absolute;inset:0;overflow:hidden;pointer-events:none"></div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:#b2e126;letter-spacing:4px;margin-bottom:16px">AR Nutrition.DZ</div>
+    <div style="width:220px;height:4px;background:#222;border-radius:4px;overflow:hidden;margin-bottom:10px">
+      <div id="preloaderFill" style="height:100%;width:0%;background:linear-gradient(90deg,#b2e126,#44da1f);border-radius:4px;transition:width .1s"></div>
+    </div>
+    <div id="preloaderPct" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#888">0%</div>
+  </div>
+  <style>#preloader.hidden{opacity:0;pointer-events:none}</style>
+
+  <!-- HIDDEN FILE INPUT FOR LOGO UPLOAD -->
+
+  <input type="file" id="heroLogoInput" accept="image/*" style="display:none" onchange="loadHeroLogo(event)">
+
+</body>
+
+</html>
