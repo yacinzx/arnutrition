@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>AR Nutrition DZ — لوحة التحكم</title>
+<title>AR Nutrition DZ — Tableau de bord / لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="admin.css">
 </head>
@@ -16,12 +16,12 @@
   <div class="login-box">
     <div class="login-icon">🔐</div>
     <div class="login-logo">AR <span>Nutrition</span>.DZ</div>
-    <div class="login-sub">لوحة تحكم البائع | Seller Dashboard</div>
+    <div class="login-sub">Tableau de bord Vendeur | لوحة تحكم البائع</div>
     <div class="input-wrap">
       <span class="input-icon">🔑</span>
-      <input type="password" id="passwordInput" placeholder="كلمة المرور / Password">
+      <input type="password" id="passwordInput" placeholder="Mot de passe / كلمة المرور">
     </div>
-    <button class="login-btn" onclick="login()">دخول ← Login</button>
+    <button class="login-btn" onclick="login()">Connexion ← دخول</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
@@ -36,23 +36,23 @@
     <div class="topbar-left">
       <div class="topbar-logo">AR <span>Nutrition</span>.DZ</div>
       <div class="topbar-sep"></div>
-      <div class="topbar-title">لوحة التحكم</div>
+      <div class="topbar-title">Tableau de bord</div>
     </div>
     <div class="topbar-actions">
       <div class="nav-tabs">
         <button class="tab-btn active" id="tabOrders" onclick="switchTab('orders')">
-          <span>📋</span><span class="tab-text"> الطلبات</span>
+          <span>📋</span><span class="tab-text"> Commandes</span>
         </button>
         <button class="tab-btn" id="tabProducts" onclick="switchTab('products')">
-          <span>🛍</span><span class="tab-text"> المنتجات</span>
+          <span>🛍</span><span class="tab-text"> Produits</span>
         </button>
         <button class="tab-btn" id="tabTarifs" onclick="switchTab('tarifs')">
-          <span>🚚</span><span class="tab-text"> التعريفات</span>
+          <span>🚚</span><span class="tab-text"> Tarifs</span>
         </button>
       </div>
-      <button class="icon-btn" onclick="refreshCurrent()" title="تحديث">🔄</button>
-      <button class="logout-btn" onclick="logout()">خروج ↩</button>
-      <button class="icon-btn logout-icon-btn" onclick="logout()" title="خروج">↩</button>
+      <button class="icon-btn" onclick="refreshCurrent()" title="Actualiser / تحديث">🔄</button>
+      <button class="logout-btn" onclick="logout()">Déconnexion ↩</button>
+      <button class="icon-btn logout-icon-btn" onclick="logout()" title="Déconnexion">↩</button>
     </div>
   </div>
 
@@ -62,41 +62,41 @@
 <!-- SETUP BANNER -->
 <div class="setup-banner" id="setupBanner" style="display:none">
   <span>⚠️</span>
-  <div><strong>لم يتم ربط Google Sheets بعد!</strong> اتبع تعليمات SETUP.txt لربط الموقع بقاعدة البيانات. البيانات تُحفظ محلياً في المتصفح حتى ذلك الحين.</div>
+  <div><strong>Google Sheets non connecté!</strong> Suivez les instructions SETUP.txt pour relier le site à la base de données. Les données sont sauvegardées localement en attendant.</div>
 </div>
 
 <!-- ══ ORDERS TAB ══ -->
 <div id="ordersTab">
   <div class="stat-cards">
-    <div class="stat-card c-red"><div class="stat-icon-wrap">📦</div><div class="stat-value" id="statTotal">0</div><div class="stat-label2">إجمالي الطلبات</div></div>
-    <div class="stat-card c-gold"><div class="stat-icon-wrap">🔴</div><div class="stat-value" id="statNew">0</div><div class="stat-label2">طلبات جديدة</div></div>
-    <div class="stat-card c-blue"><div class="stat-icon-wrap">✅</div><div class="stat-value" id="statConfirmed">0</div><div class="stat-label2">مؤكدة</div></div>
-    <div class="stat-card c-green"><div class="stat-icon-wrap">🚚</div><div class="stat-value" id="statDelivered">0</div><div class="stat-label2">تم التوصيل</div></div>
-    <div class="stat-card c-orange"><div class="stat-icon-wrap">💰</div><div class="stat-value" id="statRevenue">0</div><div class="stat-label2">المبيعات DA</div></div>
+    <div class="stat-card c-red"><div class="stat-icon-wrap">📦</div><div class="stat-value" id="statTotal">0</div><div class="stat-label2">Total commandes</div></div>
+    <div class="stat-card c-gold"><div class="stat-icon-wrap">🔴</div><div class="stat-value" id="statNew">0</div><div class="stat-label2">Nouvelles</div></div>
+    <div class="stat-card c-blue"><div class="stat-icon-wrap">✅</div><div class="stat-value" id="statConfirmed">0</div><div class="stat-label2">Confirmées</div></div>
+    <div class="stat-card c-green"><div class="stat-icon-wrap">🚚</div><div class="stat-value" id="statDelivered">0</div><div class="stat-label2">Livrées</div></div>
+    <div class="stat-card c-orange"><div class="stat-icon-wrap">💰</div><div class="stat-value" id="statRevenue">0</div><div class="stat-label2">Ventes DA</div></div>
   </div>
   <div class="charts-row">
-    <div class="chart-card"><div class="chart-title">📊 حالة الطلبات</div><div id="statusChart" class="bar-chart"></div></div>
-    <div class="chart-card"><div class="chart-title">🏆 أكثر الولايات طلباً</div><div id="wilayaChart" class="bar-chart"></div></div>
+    <div class="chart-card"><div class="chart-title">📊 Statut des commandes</div><div id="statusChart" class="bar-chart"></div></div>
+    <div class="chart-card"><div class="chart-title">🏆 Top wilayas</div><div id="wilayaChart" class="bar-chart"></div></div>
   </div>
   <div class="toolbar">
     <div class="search-wrap">
       <span class="s-icon">🔍</span>
-      <input type="text" class="search-input" id="searchInput" placeholder="بحث باسم أو رقم..." oninput="searchOrders(this.value)">
+      <input type="text" class="search-input" id="searchInput" placeholder="Rechercher par nom ou numéro..." oninput="searchOrders(this.value)">
     </div>
     <div class="filter-scroll">
-      <button class="filter-btn active" onclick="filterOrders('all',this)">الكل</button>
-      <button class="filter-btn" onclick="filterOrders('جديد / New',this)">🔴 جديد</button>
-      <button class="filter-btn" onclick="filterOrders('مؤكد / Confirmed',this)">🟡 مؤكد</button>
-      <button class="filter-btn" onclick="filterOrders('تم التوصيل / Delivered',this)">🟢 توصيل</button>
-      <button class="filter-btn" onclick="filterOrders('ملغي / Cancelled',this)">⚫ ملغي</button>
+      <button class="filter-btn active" onclick="filterOrders('all',this)">Tous</button>
+      <button class="filter-btn" onclick="filterOrders('جديد / New',this)">🔴 Nouveau</button>
+      <button class="filter-btn" onclick="filterOrders('مؤكد / Confirmed',this)">🟡 Confirmé</button>
+      <button class="filter-btn" onclick="filterOrders('تم التوصيل / Delivered',this)">🟢 Livré</button>
+      <button class="filter-btn" onclick="filterOrders('ملغي / Cancelled',this)">⚫ Annulé</button>
     </div>
   </div>
   <div class="card">
     <div class="card-header">
-      <div class="card-title">📋 قائمة الطلبات</div>
-      <div class="card-count" id="ordersCount">0 طلب</div>
+      <div class="card-title">📋 Liste des commandes</div>
+      <div class="card-count" id="ordersCount">0 commande(s)</div>
     </div>
-    <div class="table-wrap desktop-only"><div id="ordersTableContainer"><div class="loading"><div class="spinner"></div><p style="margin-top:12px">جاري التحميل...</p></div></div></div>
+    <div class="table-wrap desktop-only"><div id="ordersTableContainer"><div class="loading"><div class="spinner"></div><p style="margin-top:12px">Chargement...</p></div></div></div>
     <div class="mobile-only" id="mobileOrdersContainer" style="padding:12px"><div class="loading"><div class="spinner"></div></div></div>
   </div>
 </div>
@@ -105,8 +105,8 @@
 <div id="productsTab" style="display:none">
   <div class="card">
     <div class="card-header">
-      <div class="card-title">🛍 إدارة المنتجات</div>
-      <button class="add-btn" onclick="openProductModal()"><span>+</span><span class="btn-text"> إضافة منتج</span></button>
+      <div class="card-title">🛍 Gestion des produits</div>
+      <button class="add-btn" onclick="openProductModal()"><span>+</span><span class="btn-text"> Ajouter produit</span></button>
     </div>
     <div class="table-wrap desktop-only"><div id="productsTableContainer"><div class="loading"><div class="spinner"></div></div></div></div>
     <div class="mobile-only" id="mobileProductsContainer" style="padding:12px"><div class="loading"><div class="spinner"></div></div></div>
@@ -155,7 +155,7 @@
 
 <div class="modal-overlay" id="orderDetailModal">
   <div class="modal">
-    <div class="modal-hdr"><h2>تفاصيل الطلب</h2><button class="close-btn" onclick="closeDetailModal()">✕</button></div>
+    <div class="modal-hdr"><h2>Détails de la commande</h2><button class="close-btn" onclick="closeDetailModal()">✕</button></div>
     <div class="modal-content" id="orderDetailContent"></div>
   </div>
 </div>
@@ -164,54 +164,54 @@
 
 <div class="modal-overlay" id="productModal">
   <div class="modal" style="max-width:520px">
-    <div class="modal-hdr"><h2 id="productModalTitle">إضافة منتج</h2><button class="close-btn" onclick="closeProductModal()">✕</button></div>
+    <div class="modal-hdr"><h2 id="productModalTitle">Ajouter un produit</h2><button class="close-btn" onclick="closeProductModal()">✕</button></div>
     <div class="modal-content">
       <div class="form-grid">
-        <div><label class="field-label">اسم المنتج (عربي) *</label><input class="field-input" id="p-name-ar" placeholder="مثال: كرياتين 300g"></div>
-        <div><label class="field-label">Product Name (English) *</label><input class="field-input" id="p-name-en" placeholder="e.g. Creatine 300g"></div>
+        <div><label class="field-label">Nom du produit (Arabe) *</label><input class="field-input" id="p-name-ar" placeholder="مثال: كرياتين 300g"></div>
+        <div><label class="field-label">Nom du produit (Anglais) *</label><input class="field-input" id="p-name-en" placeholder="ex: Creatine 300g"></div>
 
 ```
     <div class="form-row-2">
-      <div><label class="field-label">البراند / Brand *</label><input class="field-input" id="p-brand" placeholder="OSTROVIT"></div>
-      <div><label class="field-label">السعر (DA) *</label><input class="field-input" id="p-price" type="number" placeholder="2800"></div>
+      <div><label class="field-label">Marque / Brand *</label><input class="field-input" id="p-brand" placeholder="OSTROVIT"></div>
+      <div><label class="field-label">Prix (DA) *</label><input class="field-input" id="p-price" type="number" placeholder="2800"></div>
     </div>
 
     <!-- CATEGORY -->
     <div>
-      <label class="field-label">التصنيف / Category</label>
+      <label class="field-label">Catégorie / التصنيف</label>
       <select class="field-input" id="p-cat">
-        <option value="بروتين">💪 بروتين / Protéine</option>
-        <option value="كرياتين">⚡ كرياتين / Créatine</option>
+        <option value="بروتين">💪 Protéine / بروتين</option>
+        <option value="كرياتين">⚡ Créatine / كرياتين</option>
         <option value="Mass Gainer">💪 Mass Gainer</option>
         <option value="Fat Burner">🔥 Fat Burner</option>
         <option value="Pre-Workout">⚡ Pre-Workout</option>
-        <option value="أحماض أمينية">🧬 أحماض أمينية / Acides Aminés</option>
-        <option value="فيتامينات">💊 فيتامينات / Vitamines</option>
-        <option value="مكملات صحية">🌿 مكملات صحية / Santé</option>
-        <option value="كولاجين">✨ كولاجين / Collagène</option>
-        <option value="أخرى">📦 أخرى / Autres</option>
+        <option value="أحماض أمينية">🧬 Acides Aminés / أحماض أمينية</option>
+        <option value="فيتامينات">💊 Vitamines / فيتامينات</option>
+        <option value="مكملات صحية">🌿 Santé / مكملات صحية</option>
+        <option value="كولاجين">✨ Collagène / كولاجين</option>
+        <option value="أخرى">📦 Autres / أخرى</option>
       </select>
     </div>
 
-    <div><label class="field-label">شارة / Badge</label><input class="field-input" id="p-badge" placeholder="جديد (اختياري)"></div>
+    <div><label class="field-label">Badge / شارة</label><input class="field-input" id="p-badge" placeholder="Nouveau (optionnel)"></div>
 
     <!-- IMAGE URL -->
     <div>
-      <label class="field-label">رابط الصورة / Image URL</label>
+      <label class="field-label">URL de l'image / رابط الصورة</label>
       <input class="field-input" id="p-img" placeholder="https://..." oninput="onImgUrlChange()">
       <div class="img-preview-wrap" id="img-preview-wrap" style="display:none">
         <img id="img-preview" src="" alt="preview">
-        <button type="button" class="img-preview-remove" onclick="clearImgPreview()" title="إزالة الصورة">✕</button>
+        <button type="button" class="img-preview-remove" onclick="clearImgPreview()" title="Supprimer l'image">✕</button>
       </div>
     </div>
 
     <!-- AVAILABILITY -->
     <label class="checkbox-row">
       <input type="checkbox" id="p-available" checked>
-      <span>✅ متوفر / Disponible</span>
+      <span>✅ Disponible / متوفر</span>
     </label>
   </div>
-  <button class="save-product-btn" onclick="saveProduct()">💾 حفظ المنتج</button>
+  <button class="save-product-btn" onclick="saveProduct()">💾 Enregistrer le produit</button>
   <div class="product-msg" id="product-msg"></div>
 </div>
 ```
